@@ -18,7 +18,6 @@ import (
 
 type Config struct {
 	Api_site  string
-	Api_path  string
 	Api_token string
 	Login     string
 	Password  string
@@ -93,7 +92,7 @@ func authRequest(config Config) authAnswer {
 	}
 
 	u, _ := url.ParseRequestURI(config.Api_site)
-	u.Path = config.Api_path + "authUser"
+	u.Path = "/vip/v1/authUser"
 	urlStr := fmt.Sprintf("%v", u)
 
 	req, err := http.NewRequest("POST", urlStr, strings.NewReader(data.Encode()))
@@ -216,7 +215,7 @@ func getInfo(config Config, s sessionInfo) infoAnswer {
 		"contract_id": {s.Contract_id},
 	}
 	u, _ := url.ParseRequestURI(config.Api_site)
-	u.Path = config.Api_path + "getPartContractData"
+	u.Path = "/vip/v1/getPartContractData"
 	u.RawQuery = data.Encode()
 	urlStr := fmt.Sprintf("%v", u)
 
@@ -260,10 +259,12 @@ func main() {
 	// >= 1 - инфо + ошибки
 	v := flag.Int("v", 0, "Уровень подробности лога")
 	logFileName := flag.String("log", "", "Имя log-файла")
+	configFileName := flag.String("config", "config.yaml", "Имя конфиг-файла")
 	flag.Parse()
 
 	/**v = 1
-	*logFileName = "info.log"*/
+	*logFileName = "info.log"
+	*configFileName = "config.demo.yaml"*/
 
 	if *logFileName != "" {
 		logMachine.SetLogFile(*logFileName)
@@ -271,7 +272,7 @@ func main() {
 	}
 	logMachine.SetVerbLevel(*v)
 
-	var config = readConfig("config.yaml")
+	var config = readConfig(*configFileName)
 
 	s := getSession(config, "session.id", false)
 
