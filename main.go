@@ -277,7 +277,11 @@ func main() {
 
 	info := getInfo(config, s)
 
-	if info.Status.Code == 401 {
+	// кроме 401 кода "Необходима авторизация"
+	// спустя сутки появляется ещё
+	// 403 "Нет доступа (Не найден контракт, карта или группа)"
+	// поэтому переавторизуемся при любом коде кроме 200
+	if info.Status.Code != 200 {
 		s = getSession(config, "session.id", true)
 		info = getInfo(config, s)
 	}
